@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Class Record – Achievements</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+      background-color: #f4f6f8;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #2c7be5;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background-color: #2c7be5;
+      color: white;
+    }
+
+    td[contenteditable="true"] {
+      background-color: #fdfdfd;
+      cursor: text;
+    }
+
+    .form-container {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    input {
+      padding: 8px;
+      margin: 5px;
+      width: 200px;
+    }
+
+    button {
+      padding: 8px 15px;
+      margin: 5px;
+      cursor: pointer;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .delete-btn {
+      background-color: #ff4d4f;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+
+    .delete-btn:hover {
+      background-color: #e60000;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Class Record</h1>
+
+<!-- FIRST TABLE (NO BUTTONS) -->
+<h2>Class Information</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Adviser</th>
+      <th>Grade</th>
+      <th>Section</th>
+      <th>School Year</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td contenteditable="true">Type Adviser Name</td>
+      <td contenteditable="true">Grade</td>
+      <td contenteditable="true">Section</td>
+      <td contenteditable="true">School Year</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- INPUT FORM FOR SECOND TABLE -->
+<div class="form-container">
+  <input type="text" id="nameInput" placeholder="Student Name">
+  <input type="text" id="achievementInput" placeholder="Achievement">
+  <button onclick="addAchievement()">Add Achievement</button>
+</div>
+
+<!-- SECOND TABLE -->
+<h2>Student Achievements</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Achievements</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="studentTable">
+    <!-- Rows added by JavaScript -->
+  </tbody>
+</table>
+
+<script>
+  const students = [];
+
+  function addAchievement() {
+    const name = document.getElementById("nameInput").value.trim();
+    const achievement = document.getElementById("achievementInput").value.trim();
+
+    if (!name || !achievement) {
+      alert("Please enter both name and achievement.");
+      return;
+    }
+
+    let student = students.find(s => s.name.toLowerCase() === name.toLowerCase());
+
+    if (student) {
+      student.achievements.push(achievement);
+    } else {
+      students.push({ name, achievements: [achievement] });
+    }
+
+    students.sort((a, b) => a.name.localeCompare(b.name));
+    displayStudents();
+
+    document.getElementById("nameInput").value = "";
+    document.getElementById("achievementInput").value = "";
+  }
+
+  function displayStudents() {
+    const table = document.getElementById("studentTable");
+    table.innerHTML = "";
+
+    students.forEach((student, index) => {
+      const row = document.createElement("tr");
+
+      row.innerHTML = `
+        <td>${student.name}</td>
+        <td>
+          <ul>
+            ${student.achievements.map(a => `<li>${a}</li>`).join("")}
+          </ul>
+        </td>
+        <td>
+          <button class="delete-btn" onclick="deleteStudent(${index})">Delete</button>
+        </td>
+      `;
+
+      table.appendChild(row);
+    });
+  }
+
+  function deleteStudent(index) {
+    if (confirm("Delete this student?")) {
+      students.splice(index, 1);
+      displayStudents();
+    }
+  }
+</script>
+
+</body>
+</html>
